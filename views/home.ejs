@@ -1,0 +1,54 @@
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Every Drop Counts</h1>
+        <p>Donate Today</p>
+        <div class="hero-buttons">
+            <a href="/add-donor" class="btn btn-primary">Become a Donor</a>
+            <a href="/request-blood" class="btn btn-secondary">Request Blood</a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Bar -->
+<section class="stats-bar">
+    <div class="stat">
+        <div class="stat-value"><%= stats.totalDonors %></div>
+        <div class="stat-label">Active Donors</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value"><%= stats.requestsFulfilled %></div>
+        <div class="stat-label">Lives Saved</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value"><%= stats.citiesCovered %></div>
+        <div class="stat-label">Cities Covered</div>
+    </div>
+</section>
+
+<!-- Quick Action Cards Grid -->
+<section class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="cards-grid">
+        <a href="/add-donor" class="action-card">
+            <div class="card-icon">🩸</div>
+            <h3>Register as Donor</h3>
+            <p>Join our network and save lives</p>
+        </a>
+        <a href="/request-blood" class="action-card">
+            <div class="card-icon">🏥</div>
+            <h3>Request Blood</h3>
+            <p>Find blood when you need it</p>
+        </a>
+        <a href="/donors" class="action-card">
+            <div class="card-icon">👥</div>
+            <h3>View Donors</h3>
+            <p>Browse all registered donors</p>
+        </a>
+        <a href="/requests" class="action-card">
+            <div class="card-icon">📋</div>
+            <h3>View Requests</h3>
+            <p>See all active blood requests</p>
+        </a>
+    </div>
+</section>

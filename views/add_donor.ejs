@@ -1,0 +1,95 @@
+<!-- Success Toast -->
+<div id="successToast" class="success-toast">
+    <span class="toast-icon">✓</span>
+    <span class="toast-message">You're registered! Thank you for saving lives.</span>
+</div>
+
+<!-- Progress Steps -->
+<div class="progress-steps">
+    <div class="step active">
+        <div class="step-number">1</div>
+        <div class="step-label">Personal Info</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-label">Blood Info</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-label">Confirm</div>
+    </div>
+</div>
+
+<h2>Register as a Donor</h2>
+
+<form method="post" action="/add-donor" class="styled-form donor-form">
+    <!-- Personal Info Section -->
+    <div class="form-row">
+        <div class="form-group">
+            <label for="id_name">Name</label>
+            <input type="text" name="name" maxlength="100" required id="id_name" placeholder="Full name">
+        </div>
+        <div class="form-group">
+            <label for="id_email">Email</label>
+            <input type="email" name="email" required id="id_email" placeholder="your@email.com">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="id_phone_number">Phone Number</label>
+            <input type="text" name="phone_number" maxlength="15" required id="id_phone_number" placeholder="+1 (555) 000-0000">
+        </div>
+        <div class="form-group">
+            <label for="id_city">City</label>
+            <input type="text" name="city" maxlength="50" required id="id_city" placeholder="Your city">
+        </div>
+    </div>
+
+    <!-- Blood Group Selection -->
+    <div class="form-group full-width">
+        <label>Blood Group</label>
+        <div class="blood-group-selector">
+            <button type="button" class="blood-btn" data-blood="A+">A+</button>
+            <button type="button" class="blood-btn" data-blood="A-">A-</button>
+            <button type="button" class="blood-btn" data-blood="B+">B+</button>
+            <button type="button" class="blood-btn" data-blood="B-">B-</button>
+            <button type="button" class="blood-btn" data-blood="AB+">AB+</button>
+            <button type="button" class="blood-btn" data-blood="AB-">AB-</button>
+            <button type="button" class="blood-btn" data-blood="O+">O+</button>
+            <button type="button" class="blood-btn" data-blood="O-">O-</button>
+        </div>
+        <input type="hidden" name="blood_group" id="blood_group_input" required>
+    </div>
+
+    <button type="submit" class="btn btn-register">Complete Registration</button>
+</form>
+
+<script>
+    // Blood group selection
+    document.querySelectorAll('.blood-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Remove selected class from all buttons
+            document.querySelectorAll('.blood-btn').forEach(b => b.classList.remove('selected'));
+            // Add selected class to clicked button
+            this.classList.add('selected');
+            // Set hidden input value
+            document.getElementById('blood_group_input').value = this.dataset.blood;
+        });
+    });
+
+    // Success toast
+    window.addEventListener('load', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'true') {
+            const toast = document.getElementById('successToast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+    });
+</script>

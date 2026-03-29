@@ -1,0 +1,166 @@
+<!-- Header with Add Donor Button -->
+<div class="list-header">
+    <div class="header-content">
+        <h2>Registered Donors</h2>
+        <p class="donor-count"><%= donors.length %> donor<%= donors.length !== 1 ? 's' : '' %> available</p>
+    </div>
+    <a href="/add-donor" class="btn btn-primary">+ Add Donor</a>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <div class="filter-group">
+        <span class="filter-label">Blood Group:</span>
+        <div class="filter-chips">
+            <button class="filter-chip active" data-filter="all" data-type="blood">All</button>
+            <button class="filter-chip" data-filter="A+" data-type="blood">A+</button>
+            <button class="filter-chip" data-filter="A-" data-type="blood">A-</button>
+            <button class="filter-chip" data-filter="B+" data-type="blood">B+</button>
+            <button class="filter-chip" data-filter="B-" data-type="blood">B-</button>
+            <button class="filter-chip" data-filter="AB+" data-type="blood">AB+</button>
+            <button class="filter-chip" data-filter="AB-" data-type="blood">AB-</button>
+            <button class="filter-chip" data-filter="O+" data-type="blood">O+</button>
+            <button class="filter-chip" data-filter="O-" data-type="blood">O-</button>
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <span class="filter-label">City:</span>
+        <div class="filter-chips">
+            <button class="filter-chip active" data-filter="all" data-type="city">All</button>
+            <% 
+                const uniqueCities = [...new Set(donors.map(d => d.city))];
+                uniqueCities.sort().forEach(city => { 
+            %>
+                <button class="filter-chip" data-filter="<%= city %>" data-type="city"><%= city %></button>
+            <% }); %>
+        </div>
+    </div>
+</div>
+
+<!-- Donor Cards Grid -->
+<% if (donors.length > 0) { %>
+    <div class="donor-cards-grid">
+        <% donors.forEach((donor) => { 
+            const names = donor.name.split(' ');
+            const initials = (names[0][0] + (names[1] ? names[1][0] : '')).toUpperCase();
+        %>
+            <div class="donor-card" data-blood="<%= donor.blood_group %>" data-city="<%= donor.city %>">
+                <div class="card-content">
+                    <!-- Avatar -->
+                    <div class="avatar" data-initials="<%= initials %>" data-letter="<%= donor.name[0] %>">
+                        <span><%= initials %></span>
+                    </div>
+
+                    <!-- Donor Info -->
+                    <div class="donor-info">
+                        <h3 class="donor-name"><%= donor.name %></h3>
+                        <p class="donor-location">
+                            📍 <%= donor.city %>
+                        </p>
+                        <p class="donor-phone">
+                            📞 <%= donor.phone_number %>
+                        </p>
+                    </div>
+
+                    <!-- Blood Badge -->
+                    <div class="blood-badge">
+                        <%= donor.blood_group %>
+                    </div>
+                </div>
+
+                <!-- Contact Button -->
+                <button class="contact-btn" onclick="window.location='tel:<%= donor.phone_number %>'">
+                    📞 Contact
+                </button>
+            </div>
+        <% }); %>
+    </div>
+<% } else { %>
+    <div class="no-donors">
+        <p>No donors registered yet. Be the first to save a life! ❤️</p>
+        <a href="/add-donor" class="btn btn-primary">Register as Donor</a>
+    </div>
+<% } %>
+
+<script>
+    // Avatar color palette (6 colors) based on first letter
+    const avatarColors = [
+        '#FF6B6B', // Red
+        '#FF8B8B', // Light Red
+        '#FF5757', // Darker Red
+        '#FF4757', // Deep Red
+        '#FF3838', // Very Deep Red
+        '#FF1744'  // Crimson
+    ];
+
+    // Set avatar colors based on first letter
+    document.querySelectorAll('.avatar').forEach(avatar => {
+        const letter = avatar.dataset.letter.toUpperCase();
+        const charCode = letter.charCodeAt(0);
+        const colorIndex = charCode % avatarColors.length;
+        avatar.style.backgroundColor = avatarColors[colorIndex];
+    });
+
+    // Filter functionality
+    let activeBloodFilter = 'all';
+    let activeCityFilter = 'all';
+
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            const filterType = this.dataset.type;
+            const filterValue = this.dataset.filter;
+
+            // Remove active class from sibling chips of same type
+            document.querySelectorAll(`.filter-chip[data-type="${filterType}"]`).forEach(c => c.classList.remove('active'));
+            // Add active class to clicked chip
+            this.classList.add('active');
+
+            // Update active filter
+            if (filterType === 'blood') {
+                activeBloodFilter = filterValue;
+            } else {
+                activeCityFilter = filterValue;
+            }
+
+            // Apply filter
+            applyFilters();
+        });
+    });
+
+    function applyFilters() {
+        const cards = document.querySelectorAll('.donor-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const bloodGroup = card.dataset.blood;
+            const city = card.dataset.city;
+
+            const matchesBlood = activeBloodFilter === 'all' || bloodGroup === activeBloodFilter;
+            const matchesCity = activeCityFilter === 'all' || city === activeCityFilter;
+
+            if (matchesBlood && matchesCity) {
+                card.style.display = 'flex';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Show no results message if needed
+        const grid = document.querySelector('.donor-cards-grid');
+        if (visibleCount === 0) {
+            if (!document.querySelector('.no-results')) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = 'No donors match your filters. Try adjusting your search.';
+                grid.parentNode.insertBefore(noResults, grid.nextSibling);
+            }
+        } else {
+            const noResults = document.querySelector('.no-results');
+            if (noResults) {
+                noResults.remove();
+            }
+        }
+    }
+</script>

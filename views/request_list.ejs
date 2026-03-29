@@ -1,0 +1,178 @@
+<div class="list-header">
+    <div class="header-content">
+        <h2>Active Blood Requests</h2>
+        <p class="request-count"><%= requests.length %> request<%= requests.length !== 1 ? 's' : '' %> active</p>
+    </div>
+    <a href="/request-blood" class="btn btn-primary">+ New Request</a>
+</div>
+
+<!-- Filter Section -->
+<div class="filter-section">
+    <div class="filter-group">
+        <span class="filter-label">Filter by:</span>
+        <div class="filter-chips">
+            <button class="filter-chip active" data-filter="all" data-type="urgency">All</button>
+            <button class="filter-chip" data-filter="urgent" data-type="urgency">🚨 Urgent Only</button>
+        </div>
+    </div>
+
+    <div class="filter-group">
+        <span class="filter-label">Blood Group:</span>
+        <div class="filter-chips">
+            <button class="filter-chip active" data-filter="all" data-type="blood">All</button>
+            <% 
+                const uniqueBloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+                uniqueBloodGroups.forEach(blood => { 
+            %>
+                <button class="filter-chip" data-filter="<%= blood %>" data-type="blood"><%= blood %></button>
+            <% }); %>
+        </div>
+    </div>
+</div>
+
+<!-- Request Cards Grid -->
+<% if (requests.length > 0) { %>
+    <div class="request-cards-grid" id="requestCardsGrid">
+        <% requests.forEach((req) => { %>
+            <div class="request-card <%= req.is_urgent ? 'urgent-card' : '' %>" data-urgent="<%= req.is_urgent ? 'true' : 'false' %>" data-blood="<%= req.blood_group %>">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3 class="patient-name"><%= req.patient_name %></h3>
+                        <p class="request-time" data-timestamp="<%= req.date_requested.getTime() %>">
+                            now
+                        </p>
+                    </div>
+                    <% if (req.is_urgent) { %>
+                        <span class="urgent-badge">URGENT</span>
+                    <% } %>
+                </div>
+
+                <div class="card-details">
+                    <p class="detail-item">
+                        <span class="detail-icon">🏥</span>
+                        <span class="detail-text"><%= req.hospital_name %>, <%= req.city %></span>
+                    </p>
+                    <p class="detail-item">
+                        <span class="detail-icon">📞</span>
+                        <span class="detail-text"><%= req.phone_number %></span>
+                    </p>
+                </div>
+
+                <div class="card-footer">
+                    <div class="blood-group-display"><%= req.blood_group %></div>
+                    <button class="help-btn" onclick="window.location='tel:<%= req.phone_number %>'">
+                        I Can Help →
+                    </button>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+<% } else { %>
+    <div class="no-requests">
+        <p>No active blood requests at the moment. ✓</p>
+        <a href="/request-blood" class="btn btn-primary">Create a Request</a>
+    </div>
+<% } %>
+
+<script>
+    // Time ago formatter
+    function timeAgo(timestamp) {
+        const now = new Date();
+        const secondsAgo = Math.floor((now - new Date(timestamp)) / 1000);
+
+        let interval = secondsAgo / 31536000;
+        if (interval > 1) return Math.floor(interval) + ' years ago';
+
+        interval = secondsAgo / 2592000;
+        if (interval > 1) return Math.floor(interval) + ' months ago';
+
+        interval = secondsAgo / 86400;
+        if (interval > 1) return Math.floor(interval) + ' days ago';
+
+        interval = secondsAgo / 3600;
+        if (interval > 1) return Math.floor(interval) + ' hours ago';
+
+        interval = secondsAgo / 60;
+        if (interval > 1) return Math.floor(interval) + ' minutes ago';
+
+        return 'just now';
+    }
+
+    // Update relative timestamps
+    function updateTimestamps() {
+        document.querySelectorAll('.request-time').forEach(el => {
+            const timestamp = parseInt(el.dataset.timestamp);
+            el.textContent = timeAgo(timestamp);
+        });
+    }
+
+    // Update timestamps on load and every minute
+    updateTimestamps();
+    setInterval(updateTimestamps, 60000);
+
+    // Filter functionality
+    let activeUrgencyFilter = 'all';
+    let activeBloodFilter = 'all';
+
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.addEventListener('click', function() {
+            const filterType = this.dataset.type;
+            const filterValue = this.dataset.filter;
+
+            // Remove active class from sibling chips of same type
+            document.querySelectorAll(`.filter-chip[data-type="${filterType}"]`).forEach(c => c.classList.remove('active'));
+            // Add active class to clicked chip
+            this.classList.add('active');
+
+            // Update active filter
+            if (filterType === 'urgency') {
+                activeUrgencyFilter = filterValue;
+            } else {
+                activeBloodFilter = filterValue;
+            }
+
+            // Apply filter
+            applyFilters();
+        });
+    });
+
+    function applyFilters() {
+        const cards = document.querySelectorAll('.request-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const isUrgent = card.dataset.urgent === 'true';
+            const bloodGroup = card.dataset.blood;
+
+            let matchesUrgency = true;
+            if (activeUrgencyFilter === 'urgent') {
+                matchesUrgency = isUrgent;
+            }
+
+            const matchesBlood = activeBloodFilter === 'all' || bloodGroup === activeBloodFilter;
+
+            if (matchesUrgency && matchesBlood) {
+                card.style.display = 'flex';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Show no results message if needed
+        const grid = document.getElementById('requestCardsGrid');
+        if (visibleCount === 0) {
+            if (!document.querySelector('.no-results')) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = 'No requests match your filters. Try adjusting your search.';
+                grid.parentNode.insertBefore(noResults, grid.nextSibling);
+            }
+        } else {
+            const noResults = document.querySelector('.no-results');
+            if (noResults) {
+                noResults.remove();
+            }
+        }
+    }
+</script>

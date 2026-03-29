@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donation Management</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="/" class="navbar-logo">LifeLink</a>
+        <ul class="navbar-menu">
+            <li><a href="/add-donor">Become a Donor</a></li>
+            <li><a href="/request-blood">Request Blood</a></li>
+            <li><a href="/donors">View Donors</a></li>
+            <li><a href="/requests">View Requests</a></li>
+            <li><a href="/request-blood" class="emergency-cta">+ Emergency</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <%- body %>
+    </main>
+
+</body>
+
+</html>
