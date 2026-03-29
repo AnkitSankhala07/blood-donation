@@ -210,30 +210,6 @@ Fully responsive across all devices:
 
 ---
 
-## 🚀 Deployment
-
-### Deploy to Heroku
-```bash
-# Login to Heroku
-heroku login
-
-# Create new app
-heroku create your-app-name
-
-# Add MongoDB Atlas connection
-heroku config:set MONGO_URI=your_mongodb_atlas_uri
-
-# Deploy
-git push heroku main
-```
-
-### Deploy to Vercel (Frontend only)
-```bash
-npm install -g vercel
-vercel
-```
-
----
 
 ## 🔐 Security Notes
 
