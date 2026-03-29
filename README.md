@@ -162,48 +162,7 @@ blood_donation/
 
 ---
 
-## 🔌 API Routes
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| `GET` | `/` | Home page with live stats |
-| `GET` | `/add-donor` | Donor registration form |
-| `POST` | `/add-donor` | Submit new donor registration |
-| `GET` | `/donors` | View all donors with filters |
-| `GET` | `/request-blood` | Blood request form |
-| `POST` | `/request-blood` | Submit blood request |
-| `GET` | `/requests` | View all requests (urgent first) |
-
----
-
-## 💾 Database Models
-
-### Donor Schema
-```javascript
-{
-  name: String (required),
-  email: String (required, unique),
-  phone_number: String (required),
-  city: String (required),
-  blood_group: String (A+, A-, B+, B-, AB+, AB-, O+, O-),
-  date_registered: Date (auto)
-}
-```
-
-### Blood Request Schema
-```javascript
-{
-  patient_name: String (required),
-  phone_number: String (required),
-  hospital_name: String (required),
-  city: String (required),
-  blood_group: String (A+, A-, B+, B-, AB+, AB-, O+, O-),
-  is_urgent: Boolean (default: false),
-  date_requested: Date (auto)
-}
-```
-
----
 
 ## 🎯 Key Features Explained
 
@@ -349,9 +308,9 @@ Contributions are welcome! Please:
 ## 📧 Contact
 
 For questions or feedback:
-- **Email:** your.email@example.com
-- **LinkedIn:** [Your LinkedIn](https://linkedin.com/in/yourprofile)
-- **GitHub:** [@yourusername](https://github.com/yourusername)
+- **Email:** ankitsankhala617@gmail.com
+- **LinkedIn:** [Your LinkedIn](https://www.linkedin.com/in/Ankit-Sankhala7)
+- **GitHub:** [@yourusername](https://github.com/AnkitSankhala07)
 
 ---
 
